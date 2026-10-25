@@ -27,6 +27,7 @@ Para dar cumplimiento al principio de los **Doce Factores (III. Configuraciones 
 | :--- | :--- | :--- | :---: |
 | `DB_HOST` | Host o nombre del servicio Docker MySQL | `localhost` | **Sí** (ej: `mysql-shipment`) |
 | `DB_PORT` | Puerto de escucha de MySQL | `3306` | No (default `3306`) |
+| `DB_NAME` | Nombre de la base de datos | `shipment_db` / `courier_db` | No (usa nombre por defecto) |
 | `DB_USER` | Usuario de conexión a la base de datos | `root` | **Sí** |
 | `DB_PASSWORD` | Contraseña de conexión a MySQL | `root` | **Sí** (sin fallback) |
 | `COURIER_SERVICE_URL` | URL base del microservicio de repartidores | `http://localhost:8081` | `http://courier-service:8081` |

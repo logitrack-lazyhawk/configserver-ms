@@ -20,7 +20,7 @@ spring:
   # ----------------------------------------------------------------------------
   datasource:
     # Nombre DNS del servicio Docker MySQL de repartidores
-    url: jdbc:mysql://${DB_HOST:mysql-courier}:${DB_PORT:3306}/courier_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${DB_HOST:mysql-courier}:${DB_PORT:3306}/${DB_NAME:courier_db}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: ${DB_USER:courier_user}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver

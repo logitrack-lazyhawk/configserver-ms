@@ -20,7 +20,7 @@ spring:
   # ----------------------------------------------------------------------------
   datasource:
     # Nombre DNS del servicio Docker MySQL de envíos
-    url: jdbc:mysql://${DB_HOST:mysql-shipment}:${DB_PORT:3306}/shipment_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${DB_HOST:mysql-shipment}:${DB_PORT:3306}/${DB_NAME:shipment_db}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: ${DB_USER:shipment_user}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
