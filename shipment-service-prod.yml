@@ -1,0 +1,88 @@
+# ==============================================================================
+# LOGITRACK - CONFIGURACIÓN CENTRALIZADA
+# Servicio: shipment-service
+# Perfil:   prod (Producción / Docker Compose unificado)
+# Puerto:   8080
+# ==============================================================================
+
+server:
+  port: 8080
+  error:
+    include-message: never
+    include-binding-errors: never
+
+spring:
+  application:
+    name: shipment-service
+
+  # ----------------------------------------------------------------------------
+  # PERSISTENCIA Y BASE DE DATOS (MySQL en contenedor Docker)
+  # ----------------------------------------------------------------------------
+  datasource:
+    # Nombre DNS del servicio Docker MySQL de envíos
+    url: jdbc:mysql://${DB_HOST:mysql-shipment}:${DB_PORT:3306}/shipment_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: ${DB_USER:shipment_user}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 600000
+      connection-timeout: 30000
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      # En producción nunca se altera el esquema automáticamente
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.MySQLDialect
+
+# ------------------------------------------------------------------------------
+# COMUNICACIÓN INTER-SERVICIO (Red interna de Docker)
+# ------------------------------------------------------------------------------
+app:
+  services:
+    courier:
+      # Resuelve a través del nombre de servicio en la red Docker
+      url: ${COURIER_SERVICE_URL:http://courier-service:8081}
+      timeout:
+        connect-ms: 2000
+        read-ms: 3000
+
+
+
+# ------------------------------------------------------------------------------
+# OBSERVABILIDAD Y ACTUATOR
+# ------------------------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+# ------------------------------------------------------------------------------
+# DOCUMENTACIÓN DE APIS (OpenAPI / Swagger)
+# ------------------------------------------------------------------------------
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+# ------------------------------------------------------------------------------
+# LOGGING (Producción: controlado para rendimiento y seguridad)
+# ------------------------------------------------------------------------------
+logging:
+  level:
+    root: WARN
+    com.logitrack.shipmentservice: INFO
+    org.springframework: WARN
+    org.hibernate: ERROR
