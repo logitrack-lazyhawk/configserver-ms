@@ -16,6 +16,8 @@ El repositorio almacena exclusivamente archivos de configuración estructurados 
 | `shipment-service-prod.yml` | `shipment-service` | `prod` | 8080 | `shipment_db` |
 | `courier-service-dev.yml` | `courier-service` | `dev` | 8081 | `courier_db` |
 | `courier-service-prod.yml` | `courier-service` | `prod` | 8081 | `courier_db` |
+| `security-service-dev.yml` | `security-service` | `dev` | 8083 | `security_db` |
+| `security-service-prod.yml` | `security-service` | `prod` | 8083 | `security_db` |
 
 ---
 
@@ -27,10 +29,13 @@ Para dar cumplimiento al principio de los **Doce Factores (III. Configuraciones 
 | :--- | :--- | :--- | :---: |
 | `DB_HOST` | Host o nombre del servicio Docker MySQL | `localhost` | **Sí** (ej: `mysql-shipment`) |
 | `DB_PORT` | Puerto de escucha de MySQL | `3306` | No (default `3306`) |
-| `DB_NAME` | Nombre de la base de datos | `shipment_db` / `courier_db` | No (usa nombre por defecto) |
+| `DB_NAME` | Nombre de la base de datos | `shipment_db` / `courier_db` / `security_db` | No (usa nombre por defecto) |
 | `DB_USER` | Usuario de conexión a la base de datos | `root` | **Sí** |
 | `DB_PASSWORD` | Contraseña de conexión a MySQL | `root` | **Sí** (sin fallback) |
 | `COURIER_SERVICE_URL` | URL base del microservicio de repartidores | `http://localhost:8081` | `http://courier-service:8081` |
+| `SECURITY_JWT_SECRET_KEY` | Clave secreta privada para firma y validación de tokens JWT | *(hash por defecto dev)* | **Sí** (alta entropía en prod) |
+| `SECURITY_JWT_EXPIRATION` | Tiempo de expiración del token JWT en milisegundos | `3600000` (1h) | No |
+| `SECURITY_JWT_ISSUER` | Emisor identificado en el token JWT | `logitrack-security` | No |
 
 ---
 
@@ -59,6 +64,12 @@ curl -X GET http://localhost:8085/shipment-service-dev.yml
 ```bash
 curl -X GET http://localhost:8085/courier-service/dev
 curl -X GET http://localhost:8085/courier-service/prod
+```
+
+### 4. Consultar configuración de `security-service`
+```bash
+curl -X GET http://localhost:8085/security-service/dev
+curl -X GET http://localhost:8085/security-service/prod
 ```
 
 ---
