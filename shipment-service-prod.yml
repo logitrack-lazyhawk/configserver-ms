@@ -34,8 +34,8 @@ spring:
     open-in-view: false
     hibernate:
       # En producción nunca se altera el esquema automáticamente
-      ddl-auto: validate
-    show-sql: false
+      ddl-auto: ${JPA_DDL_AUTO:validate}
+    show-sql: ${SHOW_SQL:false}
     properties:
       hibernate:
         format_sql: false
