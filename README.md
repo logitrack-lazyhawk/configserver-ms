@@ -32,7 +32,8 @@ Para dar cumplimiento al principio de los **Doce Factores (III. Configuraciones 
 | `DB_NAME` | Nombre de la base de datos | `shipment_db` / `courier_db` / `security_db` | No (usa nombre por defecto) |
 | `DB_USER` | Usuario de conexión a la base de datos | `root` | **Sí** |
 | `DB_PASSWORD` | Contraseña de conexión a MySQL | `root` | **Sí** (sin fallback) |
-| `COURIER_SERVICE_URL` | URL base del microservicio de repartidores | `http://localhost:8081` | `http://courier-service:8081` |
+| `EUREKA_SERVER_URL` | Registro y descubrimiento para Feign | `http://localhost:8065/eureka/` | `http://eureka-server:8065/eureka/` |
+| `ZIPKIN_ENDPOINT` | Exportación de trazas | `http://localhost:9411/api/v2/spans` | `http://zipkin-server:9411/api/v2/spans` |
 | `SECURITY_JWT_SECRET_KEY` | Clave secreta privada para firma y validación de tokens JWT | *(hash por defecto dev)* | **Sí** (alta entropía en prod) |
 | `SECURITY_JWT_EXPIRATION` | Tiempo de expiración del token JWT en milisegundos | `3600000` (1h) | No |
 | `SECURITY_JWT_ISSUER` | Emisor identificado en el token JWT | `logitrack-security` | No |
@@ -87,3 +88,18 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 ```
+
+## Sprint 3: Feign y trazabilidad
+
+Las propiedades de OpenFeign y Resilience4j están centralizadas en los dos perfiles
+de shipment-service. Los errores de negocio (400/404) no cuentan como fallos del
+circuito. Las llamadas tienen 2 segundos para conectar, 3 para leer y un límite
+global de 6 segundos. El circuito se abre con al menos 5 llamadas y un 50% de fallos,
+y espera 10 segundos antes de probar la recuperación.
+
+Spring Boot 4 utiliza Micrometer Tracing + Brave y el starter de Zipkin.
+La propiedad del exportador es `management.tracing.export.zipkin.endpoint`.
+`TRACING_SAMPLING_PROBABILITY` vale 1.0 para la demostración; puede reducirse por entorno.
+La configuración de Eureka está en `eureka-server-dev.yml` y `eureka-server-prod.yml`.
+Docker Compose monta este repositorio en modo native; fuera de Docker, Config Server
+mantiene su backend Git y la rama main.

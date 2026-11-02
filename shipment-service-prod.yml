@@ -12,6 +12,17 @@ server:
     include-binding-errors: never
 
 spring:
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      client:
+        config:
+          courier-service:
+            connectTimeout: 2000
+            readTimeout: 3000
+      micrometer:
+        enabled: true
   application:
     name: shipment-service
 
@@ -41,43 +52,6 @@ spring:
         format_sql: false
         dialect: org.hibernate.dialect.MySQLDialect
 
-# ------------------------------------------------------------------------------
-# COMUNICACIÓN INTER-SERVICIO (Red interna de Docker)
-# ------------------------------------------------------------------------------
-app:
-  services:
-    courier:
-      # Resuelve a través del nombre de servicio en la red Docker
-      url: ${COURIER_SERVICE_URL:http://courier-service:8081}
-      timeout:
-        connect-ms: 2000
-        read-ms: 3000
-
-
-
-# ------------------------------------------------------------------------------
-# OBSERVABILIDAD Y ACTUATOR
-# ------------------------------------------------------------------------------
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: when_authorized
-  tracing:
-    sampling:
-      probability: 1.0
-    brave:
-      span-joining-supported: true
-  zipkin:
-    tracing:
-      endpoint: "http://localhost:9411/api/v2/spans"
-
-# ------------------------------------------------------------------------------
-# DOCUMENTACIÓN DE APIS (OpenAPI / Swagger)
-# ------------------------------------------------------------------------------
 springdoc:
   api-docs:
     path: /api-docs
@@ -99,25 +73,38 @@ logging:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8065/eureka/
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-    brave:
-      span-joining-supported: true
-  zipkin:
-    tracing:
-      endpoint: "http://localhost:9411/api/v2/spans"
+      defaultZone: ${EUREKA_SERVER_URL:http://eureka-server:8065/eureka/}
 
-# ------------------------------------------------------------------------------
-# OBSERVABILIDAD Y ACTUATOR (Spring Cloud Sleuth + Zipkin)
-#------------------------------------------------------------------------------
+# Micrometer Tracing + Brave + Zipkin (Spring Boot 4).
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
   tracing:
     sampling:
-      probability: 1.0
-  zipkin:
-    tracing:
-      endpoint: "http://localhost:9411/api/v2/spans"
-# -----------------------------------------------------------------------------
+      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
+    export:
+      zipkin:
+        endpoint: ${ZIPKIN_ENDPOINT:http://zipkin-server:9411/api/v2/spans}
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        ignoreExceptions:
+          - java.lang.IllegalArgumentException
+          - com.logitrack.shipmentservice.dominio.exception.ReglaNegocioException
+          - feign.FeignException$BadRequest
+          - feign.FeignException$NotFound
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 6s
