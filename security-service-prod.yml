@@ -14,12 +14,7 @@ server:
 spring:
   application:
     name: security-service
-
-  # ----------------------------------------------------------------------------
-  # PERSISTENCIA Y BASE DE DATOS (MySQL en contenedor Docker)
-  # ----------------------------------------------------------------------------
   datasource:
-    # Nombre DNS del servicio Docker MySQL de seguridad
     url: jdbc:mysql://${DB_HOST:mysql-security}:${DB_PORT:3306}/${DB_NAME:security_db}?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: ${DB_USER:security_user}
     password: ${DB_PASSWORD}
@@ -29,7 +24,6 @@ spring:
       minimum-idle: 5
       idle-timeout: 600000
       connection-timeout: 30000
-
   jpa:
     open-in-view: false
     hibernate:
@@ -40,9 +34,6 @@ spring:
         format_sql: false
         dialect: org.hibernate.dialect.MySQLDialect
 
-# ------------------------------------------------------------------------------
-# PARÁMETROS DE SEGURIDAD Y TOKENS JWT
-# ------------------------------------------------------------------------------
 security:
   jwt:
     secret-key: ${SECURITY_JWT_SECRET_KEY:${SECURITY_JWT_PRIVATE_KEY}}
@@ -57,13 +48,16 @@ logging:
     org.springframework: WARN
     org.hibernate: ERROR
 
-#------------------------------------------------------------------------------
+# --- EUREKA CLIENT ---
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: ${EUREKA_SERVER_URL:http://eureka-server:8065/eureka/}
+  instance:
+    prefer-ip-address: true # <-- AGREGADO
 
-# Micrometer Tracing + Brave + Zipkin (Spring Boot 4).
 management:
   endpoints:
     web:
