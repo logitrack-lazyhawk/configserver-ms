@@ -14,10 +14,6 @@ server:
 spring:
   application:
     name: shipment-service
-
-  # ----------------------------------------------------------------------------
-  # PERSISTENCIA Y BASE DE DATOS (MySQL - shipment_db)
-  # ----------------------------------------------------------------------------
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:shipment_db}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: ${DB_USER:root}
@@ -28,7 +24,6 @@ spring:
       minimum-idle: 2
       idle-timeout: 30000
       connection-timeout: 20000
-
   jpa:
     open-in-view: false
     defer-datasource-initialization: true
@@ -39,7 +34,6 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
-
   sql:
     init:
       mode: always
@@ -51,16 +45,25 @@ spring:
 app:
   services:
     courier:
-      # En dev apunta al puerto expuesto en localhost
       url: ${COURIER_SERVICE_URL:http://localhost:8081}
       timeout:
         connect-ms: 3000
         read-ms: 5000
 
-
+# ------------------------------------------------------------------------------
+# EUREKA CLIENT
+# ------------------------------------------------------------------------------
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8065/eureka/
+  instance:
+    prefer-ip-address: true
 
 # ------------------------------------------------------------------------------
-# OBSERVABILIDAD Y ACTUATOR
+# OBSERVABILIDAD Y ACTUATOR (Spring Cloud Sleuth + Zipkin)
 # ------------------------------------------------------------------------------
 management:
   endpoints:
@@ -91,7 +94,7 @@ springdoc:
     operations-sorter: method
 
 # ------------------------------------------------------------------------------
-# LOGGING (Nivel detallado para desarrollo)
+# LOGGING
 # ------------------------------------------------------------------------------
 logging:
   level:
@@ -100,30 +103,3 @@ logging:
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql: TRACE
-
-#-----------------------------------------------------------------------------
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8065/eureka/
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-    brave:
-      span-joining-supported: true
-  zipkin:
-    tracing:
-      endpoint: "http://localhost:9411/api/v2/spans"
-
-# ------------------------------------------------------------------------------
-# OBSERVABILIDAD Y ACTUATOR (Spring Cloud Sleuth + Zipkin)
-#------------------------------------------------------------------------------
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-  zipkin:
-    tracing:
-      endpoint: "http://localhost:9411/api/v2/spans"
-# -----------------------------------------------------------------------------
