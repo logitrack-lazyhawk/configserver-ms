@@ -94,3 +94,20 @@ management:
   zipkin:
     tracing:
       endpoint: "http://localhost:9411/api/v2/spans"
+
+# ------------------------------------------------------------------------------
+# PARÁMETROS DE NORMALIZACIÓN Y FORMATO (Desacople Sprint 2)
+# ------------------------------------------------------------------------------
+app:
+  normalizacion:
+    telefono:
+      codigo-pais: "54"
+      prefijo-internacional: "+54"
+      prefijo-movil: "+549"
+      prefijo-interurbano: "0"
+      prefijo-movil-local: "15"
+      area-amba: "11"
+      prefijo-amba-con-quince: "1115"
+      regex-limpieza: "[.\\-\\s()]"
+    dni:
+      regex-limpieza: "[.\\-\\s]"
