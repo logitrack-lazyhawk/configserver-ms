@@ -72,3 +72,17 @@ logging:
     com.logitrack.curier_service: INFO
     org.springframework: WARN
     org.hibernate: ERROR
+#------------------------------------------------------------------------------
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8065/eureka/
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    brave:
+      span-joining-supported: true
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"

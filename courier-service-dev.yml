@@ -79,3 +79,18 @@ logging:
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql: TRACE
+
+#-----------------------------------------------------------------------------
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8065/eureka/
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    brave:
+      span-joining-supported: true
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
