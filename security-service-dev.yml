@@ -48,6 +48,29 @@ security:
     expiration: ${SECURITY_JWT_EXPIRATION:3600000}
     issuer: ${SECURITY_JWT_ISSUER:logitrack-security}
 
+# ------------------------------------------------------------------------------
+# OBSERVABILIDAD Y ACTUATOR
+# ------------------------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  tracing:
+    sampling:
+      probability: 1.0
+    brave:
+      span-joining-supported: true
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
+
+# ------------------------------------------------------------------------------
+# LOGGING (Diagnóstico para lazyHawk.security_service y Spring Security)
+# ------------------------------------------------------------------------------
 logging:
   level:
     root: INFO
@@ -61,20 +84,25 @@ logging:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8065/eureka/}
-
-# Micrometer Tracing + Brave + Zipkin (Spring Boot 4).
+      defaultZone: http://localhost:8065/eureka/
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: never
   tracing:
     sampling:
-      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
-    export:
-      zipkin:
-        endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+      probability: 1.0
+    brave:
+      span-joining-supported: true
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
+
+# ------------------------------------------------------------------------------
+# OBSERVABILIDAD Y ACTUATOR (Spring Cloud Sleuth + Zipkin)
+#------------------------------------------------------------------------------
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
+# -----------------------------------------------------------------------------

@@ -12,17 +12,6 @@ server:
     include-binding-errors: always
 
 spring:
-  cloud:
-    openfeign:
-      circuitbreaker:
-        enabled: true
-      client:
-        config:
-          courier-service:
-            connectTimeout: 2000
-            readTimeout: 3000
-      micrometer:
-        enabled: true
   application:
     name: shipment-service
 
@@ -56,6 +45,43 @@ spring:
       mode: always
       continue-on-error: true
 
+# ------------------------------------------------------------------------------
+# COMUNICACIÓN INTER-SERVICIO (REST hacia courier-service)
+# ------------------------------------------------------------------------------
+app:
+  services:
+    courier:
+      # En dev apunta al puerto expuesto en localhost
+      url: ${COURIER_SERVICE_URL:http://localhost:8081}
+      timeout:
+        connect-ms: 3000
+        read-ms: 5000
+
+
+
+# ------------------------------------------------------------------------------
+# OBSERVABILIDAD Y ACTUATOR
+# ------------------------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  tracing:
+    sampling:
+      probability: 1.0
+    brave:
+      span-joining-supported: true
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
+
+# ------------------------------------------------------------------------------
+# DOCUMENTACIÓN DE APIS (OpenAPI / Swagger)
+# ------------------------------------------------------------------------------
 springdoc:
   api-docs:
     path: /api-docs
@@ -79,38 +105,25 @@ logging:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8065/eureka/}
-
-# Micrometer Tracing + Brave + Zipkin (Spring Boot 4).
+      defaultZone: http://localhost:8065/eureka/
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: always
   tracing:
     sampling:
-      probability: ${TRACING_SAMPLING_PROBABILITY:1.0}
-    export:
-      zipkin:
-        endpoint: ${ZIPKIN_ENDPOINT:http://localhost:9411/api/v2/spans}
+      probability: 1.0
+    brave:
+      span-joining-supported: true
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
 
-resilience4j:
-  circuitbreaker:
-    configs:
-      default:
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10s
-        ignoreExceptions:
-          - java.lang.IllegalArgumentException
-          - com.logitrack.shipmentservice.dominio.exception.ReglaNegocioException
-          - feign.FeignException$BadRequest
-          - feign.FeignException$NotFound
-  timelimiter:
-    configs:
-      default:
-        timeoutDuration: 6s
+# ------------------------------------------------------------------------------
+# OBSERVABILIDAD Y ACTUATOR (Spring Cloud Sleuth + Zipkin)
+#------------------------------------------------------------------------------
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
+# -----------------------------------------------------------------------------
