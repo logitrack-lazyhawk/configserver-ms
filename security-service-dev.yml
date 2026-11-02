@@ -106,3 +106,10 @@ management:
     tracing:
       endpoint: "http://localhost:9411/api/v2/spans"
 # -----------------------------------------------------------------------------
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8065/eureka/
+  instance:
+    prefer-ip-address: true
