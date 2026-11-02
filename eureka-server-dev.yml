@@ -1,0 +1,14 @@
+server:
+  port: 8065
+
+eureka:
+  server:
+    enable-self-preservation: false # Desactiva el modo de autoprotección
+    eviction-interval-timer-in-ms: 3000 # Frecuencia de limpieza de servicios caídos (3 seg)
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false # Evita que el servidor se registre a sí mismo
+    fetch-registry: false        # No requiere descargar la lista de instancias
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
