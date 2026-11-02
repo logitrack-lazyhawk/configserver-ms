@@ -14,10 +14,6 @@ server:
 spring:
   application:
     name: courier-service
-
-  # ----------------------------------------------------------------------------
-  # PERSISTENCIA Y BASE DE DATOS (MySQL - courier_db)
-  # ----------------------------------------------------------------------------
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:courier_db}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: ${DB_USER:root}
@@ -28,7 +24,6 @@ spring:
       minimum-idle: 2
       idle-timeout: 30000
       connection-timeout: 20000
-
   jpa:
     open-in-view: false
     defer-datasource-initialization: true
@@ -39,15 +34,25 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
-
   sql:
     init:
       mode: always
       continue-on-error: true
 
+# ------------------------------------------------------------------------------
+# EUREKA CLIENT
+# ------------------------------------------------------------------------------
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8065/eureka/
+  instance:
+    prefer-ip-address: true
 
 # ------------------------------------------------------------------------------
-# OBSERVABILIDAD Y ACTUATOR
+# OBSERVABILIDAD Y ACTUATOR (Spring Cloud Sleuth + Zipkin)
 # ------------------------------------------------------------------------------
 management:
   endpoints:
@@ -57,6 +62,14 @@ management:
   endpoint:
     health:
       show-details: always
+  tracing:
+    sampling:
+      probability: 1.0
+    brave:
+      span-joining-supported: true
+  zipkin:
+    tracing:
+      endpoint: "http://localhost:9411/api/v2/spans"
 
 # ------------------------------------------------------------------------------
 # DOCUMENTACIÓN DE APIS (OpenAPI / Swagger)
@@ -70,65 +83,12 @@ springdoc:
     operations-sorter: method
 
 # ------------------------------------------------------------------------------
-# LOGGING (Diagnóstico para com.logitrack.curier_service)
+# LOGGING
 # ------------------------------------------------------------------------------
 logging:
   level:
     root: INFO
-    com.logitrack.curier_service: DEBUG
+    com.logitrack.courier_service: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql: TRACE
-
-#-----------------------------------------------------------------------------
-# EUREKA CLIENT
-#------------------------------------------------------------------------------
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8065/eureka/
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-    brave:
-      span-joining-supported: truegit
-  zipkin:
-    tracing:
-      endpoint: "http://localhost:9411/api/v2/spans"
-
-# ------------------------------------------------------------------------------
-# OBSERVABILIDAD Y ACTUATOR (Spring Cloud Sleuth + Zipkin)
-#------------------------------------------------------------------------------
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-  zipkin:
-    tracing:
-      endpoint: "http://localhost:9411/api/v2/spans"
-# -----------------------------------------------------------------------------
-# PARÁMETROS DE NORMALIZACIÓN Y FORMATO (Desacople Sprint 2)
-# ------------------------------------------------------------------------------
-app:
-  normalizacion:
-    telefono:
-      codigo-pais: "54"
-      prefijo-internacional: "+54"
-      prefijo-movil: "+549"
-      prefijo-interurbano: "0"
-      prefijo-movil-local: "15"
-      area-amba: "11"
-      prefijo-amba-con-quince: "1115"
-      regex-limpieza: "[.\\-\\s()]"
-    dni:
-      regex-limpieza: "[.\\-\\s]"
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8065/eureka/
-  instance:
-    prefer-ip-address: true
