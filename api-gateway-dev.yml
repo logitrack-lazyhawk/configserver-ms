@@ -1,0 +1,56 @@
+# ==============================================================================
+# LOGITRACK - CONFIGURACIÓN CENTRALIZADA
+# Servicio: api-gateway
+# Perfil:   dev (Desarrollo local / Pruebas)
+# Puerto:   8066
+# ==============================================================================
+
+server:
+  port: 8066
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:http://localhost:8065/eureka/}
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: security-service
+          uri: lb://SECURITY-SERVICE
+          predicates:
+            - Path=/api/auth/**
+
+        - id: courier-service
+          uri: lb://COURIER-SERVICE
+          predicates:
+            - Path=/api/v1/repartidores/**
+
+        - id: shipment-service-envios
+          uri: lb://SHIPMENT-SERVICE
+          predicates:
+            - Path=/api/v1/envios/**
+
+        - id: shipment-service-clientes
+          uri: lb://SHIPMENT-SERVICE
+          predicates:
+            - Path=/api/v1/clientes/**
+
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
