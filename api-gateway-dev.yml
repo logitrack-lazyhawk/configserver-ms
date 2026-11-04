@@ -8,6 +8,12 @@
 server:
   port: 8066
 
+security:
+  jwt:
+    secret-key: ${SECURITY_JWT_SECRET_KEY:${SECURITY_JWT_PRIVATE_KEY:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}}
+    expiration: ${SECURITY_JWT_EXPIRATION:3600000}
+    issuer: ${SECURITY_JWT_ISSUER:logitrack-security}
+
 eureka:
   instance:
     prefer-ip-address: true
