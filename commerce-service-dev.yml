@@ -100,4 +100,4 @@ app:
 
 mercadopago:
   access-token: ${MP_ACCESS_TOKEN:APP_USR-7236055844049782-110909-659e10252cb54a01023d8e7edeb9237b-3829532890} # <-- Pega tu token real de prueba
-  notification-url: ${MP_NOTIFICATION_URL:https://talcum-supplier-jubilant.ngrok-free.dev -> http://localhost:8084}
+  notification-url: ${MP_NOTIFICATION_URL:https://talcum-supplier-jubilant.ngrok-free.dev/api/v1/pagos/webhook}
