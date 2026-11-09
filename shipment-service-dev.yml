@@ -38,6 +38,18 @@ spring:
     init:
       mode: always
       continue-on-error: true
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+      client:
+        config:
+          default:
+            connectTimeout: 2000
+            readTimeout: 3000
+          courier-service:
+            connectTimeout: 2000
+            readTimeout: 3000
 
 # ------------------------------------------------------------------------------
 # COMUNICACIÓN INTER-SERVICIO (REST hacia courier-service)
