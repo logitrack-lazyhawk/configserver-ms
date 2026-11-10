@@ -49,10 +49,6 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-        - id: security-service
-          uri: lb://SECURITY-SERVICE
-          predicates:
-            - Path=/api/auth/**
         - id: courier-service
           uri: lb://COURIER-SERVICE
           predicates:
@@ -86,10 +82,6 @@ spring:
                 allowCredentials: true
                 maxAge: 3600
           routes:
-            - id: security-service
-              uri: lb://SECURITY-SERVICE
-              predicates:
-                - Path=/api/auth/**
             - id: courier-service
               uri: lb://COURIER-SERVICE
               predicates:
