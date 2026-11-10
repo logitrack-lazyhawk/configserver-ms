@@ -107,7 +107,18 @@ management:
   endpoint:
     gateway:
       enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: when_authorized
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
+        include: health,info,gateway,metrics,prometheus
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+  level:
+    root: WARN
+    org.springframework.cloud.gateway: INFO
