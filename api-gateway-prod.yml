@@ -59,6 +59,10 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+        - id: keycloak-service
+          uri: ${KEYCLOAK_URI:http://keycloak:8080}
+          predicates:
+            - Path=/realms/**, /resources/**
         - id: courier-service
           uri: lb://COURIER-SERVICE
           predicates:
@@ -92,6 +96,10 @@ spring:
                 allowCredentials: true
                 maxAge: 3600
           routes:
+            - id: keycloak-service
+              uri: ${KEYCLOAK_URI:http://keycloak:8080}
+              predicates:
+                - Path=/realms/**, /resources/**
             - id: courier-service
               uri: lb://COURIER-SERVICE
               predicates:
