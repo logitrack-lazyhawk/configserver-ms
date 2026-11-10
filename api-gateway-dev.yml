@@ -60,13 +60,13 @@ spring:
           lower-case-service-id: true
       routes:
         - id: keycloak-login
-          uri: ${KEYCLOAK_URI:http://localhost:8082}
+          uri: ${KEYCLOAK_URI:http://keycloak:8080}
           predicates:
             - Path=/api/auth/login
           filters:
             - SetPath=/realms/lazyhawk/protocol/openid-connect/token
         - id: keycloak-service
-          uri: ${KEYCLOAK_URI:http://localhost:8082}
+          uri: ${KEYCLOAK_URI:http://keycloak:8080}
           predicates:
             - Path=/realms/**, /resources/**
         - id: courier-service
@@ -103,13 +103,13 @@ spring:
                 maxAge: 3600
           routes:
             - id: keycloak-login
-              uri: ${KEYCLOAK_URI:http://localhost:8082}
+              uri: ${KEYCLOAK_URI:http://keycloak:8080}
               predicates:
                 - Path=/api/auth/login
               filters:
                 - SetPath=/realms/lazyhawk/protocol/openid-connect/token
             - id: keycloak-service
-              uri: ${KEYCLOAK_URI:http://localhost:8082}
+              uri: ${KEYCLOAK_URI:http://keycloak:8080}
               predicates:
                 - Path=/realms/**, /resources/**
             - id: courier-service
