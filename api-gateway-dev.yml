@@ -13,6 +13,16 @@ security:
     secret-key: ${SECURITY_JWT_SECRET_KEY:${SECURITY_JWT_PRIVATE_KEY:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}}
     expiration: ${SECURITY_JWT_EXPIRATION:3600000}
     issuer: ${SECURITY_JWT_ISSUER:logitrack-security}
+    jwk-set-uri: ${KEYCLOAK_JWKS_URI:http://localhost:8082/realms/lazyhawk/protocol/openid-connect/certs}
+
+keycloak:
+  url: ${KEYCLOAK_URL:http://localhost:8082}
+  fallback-url: ${KEYCLOAK_FALLBACK_URL:http://keycloak:8080}
+  realm: ${KEYCLOAK_REALM:lazyhawk}
+  client-id: ${KEYCLOAK_CLIENT_ID:logitrack-frontend}
+  admin:
+    user: ${KEYCLOAK_ADMIN_USER:admin}
+    password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
 
 eureka:
   instance:
