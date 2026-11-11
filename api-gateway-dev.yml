@@ -81,6 +81,10 @@ spring:
           uri: lb://SHIPMENT-SERVICE
           predicates:
             - Path=/api/v1/clientes/**
+        - id: commerce-service
+          uri: lb://COMMERCE-SERVICE
+          predicates:
+            - Path=/api/v1/productos/**, /api/v1/carritos/**, /api/v1/ordenes/**, /api/v1/pagos/**
       server:
         webflux:
           globalcors:
@@ -124,6 +128,10 @@ spring:
               uri: lb://SHIPMENT-SERVICE
               predicates:
                 - Path=/api/v1/clientes/**
+            - id: commerce-service
+              uri: lb://COMMERCE-SERVICE
+              predicates:
+                - Path=/api/v1/productos/**, /api/v1/carritos/**, /api/v1/ordenes/**, /api/v1/pagos/**
 
 management:
   endpoint:
